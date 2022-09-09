@@ -23,6 +23,26 @@ def is_valid_subnet_mask(subnet_mask):
         subnet_mask_octets[3]))
 
 
+def ip_calculator(subnet_mask):
+    subnet_mask_binaries, subnet_mask_decimal_octets = get_subnet_mask_octets(subnet_mask)
+    zeros_in_subnet_mask = subnet_mask_binaries.count("0")
+    ones_in_subnet_mask = 32 - zeros_in_subnet_mask
+    return ones_in_subnet_mask
+
+
+def get_subnet_mask_octets(subnet_mask):
+    subnet_mask_decimal_octets = subnet_mask.split(".")
+    subnet_mask_binary_octets = []
+    for octet in range(0, len(subnet_mask_decimal_octets)):
+        subnet_mask_binary = bin(int(subnet_mask_decimal_octets[octet])).split("b")[1]
+        if len(subnet_mask_binary) == 8:
+            subnet_mask_binary_octets.append(subnet_mask_binary)
+        elif len(subnet_mask_binary) < 8:
+            subnet_mask_binary_completed_octet = subnet_mask_binary.zfill(8)
+            subnet_mask_binary_octets.append(subnet_mask_binary_completed_octet)
+    return "".join(subnet_mask_binary_octets), subnet_mask_decimal_octets
+
+
 if __name__ == "__main__":
     try:
         while True:
@@ -39,6 +59,10 @@ if __name__ == "__main__":
             else:
                 print("\nThe subnetmask is INVALID, enter a valid subnetmask!")
                 continue
+
+        mask_bits = ip_calculator(subnet_mask)
+
+        print("\nThe number of mask bits is: %s" % mask_bits)
 
     except KeyboardInterrupt:
         print("/n Interrupted /n")

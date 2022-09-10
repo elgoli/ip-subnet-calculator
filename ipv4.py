@@ -26,8 +26,9 @@ def is_valid_subnet_mask(subnet_mask):
 def ip_calculator(subnet_mask):
     subnet_mask_binaries, subnet_mask_decimal_octets = get_subnet_mask_octets(subnet_mask)
     zeros_in_subnet_mask = subnet_mask_binaries.count("0")
-    ones_in_subnet_mask = 32 - zeros_in_subnet_mask
-    return ones_in_subnet_mask
+    mask_bits = 32 - zeros_in_subnet_mask
+    hosts = (2 ** zeros_in_subnet_mask) - 2
+    return mask_bits, hosts
 
 
 def get_subnet_mask_octets(subnet_mask):
@@ -60,9 +61,10 @@ if __name__ == "__main__":
                 print("\nThe subnetmask is INVALID, enter a valid subnetmask!")
                 continue
 
-        mask_bits = ip_calculator(subnet_mask)
+        mask_bits, hosts = ip_calculator(subnet_mask)
 
         print("\nThe number of mask bits is: %s" % mask_bits)
+        print("\nThe number of valid hosts per subnet is: %s" % hosts)
 
     except KeyboardInterrupt:
         print("/n Interrupted /n")

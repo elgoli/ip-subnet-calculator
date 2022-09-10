@@ -23,13 +23,15 @@ def is_valid_subnet_mask(subnet_mask):
         subnet_mask_octets[3]))
 
 
-def ip_calculator(subnet_mask):
+def ip_calculator(ip_address, subnet_mask):
     subnet_mask_binaries, subnet_mask_decimal_octets = get_subnet_mask_octets(subnet_mask)
     zeros_in_subnet_mask = subnet_mask_binaries.count("0")
     mask_bits = 32 - zeros_in_subnet_mask
     hosts = (2 ** zeros_in_subnet_mask) - 2
     wildcard_mask = get_wildcard_mask(subnet_mask_decimal_octets)
-    return mask_bits, hosts, wildcard_mask
+    ip_binary = get_ip_binary(ip_address)
+    network_address = get_network_address(ip_binary, mask_bits, zeros_in_subnet_mask)
+    return mask_bits, hosts, wildcard_mask, network_address
 
 
 def get_subnet_mask_octets(subnet_mask):
@@ -54,6 +56,31 @@ def get_wildcard_mask(subnet_mask_decimal_octets):
     return wildcard_mask
 
 
+def get_ip_binary(ip_address):
+    ip_decimal_octets = ip_address.split(".")
+    ip_binary_octets = []
+    for octets in range(0, len(ip_decimal_octets)):
+        ip_binary_octet = bin(int(ip_decimal_octets[octets])).split("b")[1]
+        if len(ip_binary_octet) == 8:
+            ip_binary_octets.append(ip_binary_octet)
+        elif len(ip_binary_octet) < 8:
+            ip_binary_completed_octet = ip_binary_octet.zfill(8)
+            ip_binary_octets.append(ip_binary_completed_octet)
+    return "".join(ip_binary_octets)
+
+
+def get_network_address(ip_binary, mask_bits, zeros_in_subnet_mask):
+    network_address_binary = ip_binary[:mask_bits] + "0" * zeros_in_subnet_mask
+    network_address_octets = []
+    for octet in range(0, len(network_address_binary), 8):
+        network_address_octet = network_address_binary[octet:octet + 8]
+        network_address_octets.append(network_address_octet)
+    network_address = []
+    for octet in network_address_octets:
+        network_address.append(str(int(octet, 2)))
+    return ".".join(network_address)
+
+
 if __name__ == "__main__":
     try:
         while True:
@@ -71,11 +98,12 @@ if __name__ == "__main__":
                 print("\nThe subnetmask is INVALID, enter a valid subnetmask!")
                 continue
 
-        mask_bits, hosts, wildcard_mask = ip_calculator(subnet_mask)
+        mask_bits, hosts, wildcard_mask, network_address = ip_calculator(ip_address, subnet_mask)
 
         print("\nThe number of mask bits is: %s" % mask_bits)
         print("\nThe number of valid hosts per subnet is: %s" % hosts)
         print("\nThe wildcard mask: %s" % wildcard_mask)
+        print("\nThe network address is: %s" % network_address)
 
     except KeyboardInterrupt:
         print("/n Interrupted /n")

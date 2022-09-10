@@ -1,0 +1,6 @@
+image: python:3.10
+
+unit-test-job:
+  stage: test
+  script:
+    - python3 -m unittest

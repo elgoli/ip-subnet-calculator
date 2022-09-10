@@ -1,5 +1,4 @@
-# ip-calculator
-## ipv4
+# ip-subnet-calculator
 This is an IPV4 subnet calculator, it receives an IPv4 address and subnetmask as inputs from user and calculates the following outputs:
 
 - Network address

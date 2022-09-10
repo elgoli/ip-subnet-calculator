@@ -31,7 +31,8 @@ def ip_calculator(ip_address, subnet_mask):
     wildcard_mask = get_wildcard_mask(subnet_mask_decimal_octets)
     ip_binary = get_ip_binary(ip_address)
     network_address = get_network_address(ip_binary, mask_bits, zeros_in_subnet_mask)
-    return mask_bits, hosts, wildcard_mask, network_address
+    broadcast_ip_address = get_broadcast_address(ip_binary, mask_bits, zeros_in_subnet_mask)
+    return mask_bits, hosts, wildcard_mask, network_address, broadcast_ip_address
 
 
 def get_subnet_mask_octets(subnet_mask):
@@ -81,6 +82,18 @@ def get_network_address(ip_binary, mask_bits, zeros_in_subnet_mask):
     return ".".join(network_address)
 
 
+def get_broadcast_address(ip_binary, no_ones_in_subnet_mask, no_zeros_in_subnet_mask):
+    broadcast_address_binary = ip_binary[:no_ones_in_subnet_mask] + ("1" * no_zeros_in_subnet_mask)
+    broadcast_address_octets = []
+    for octet in range(0, len(broadcast_address_binary), 8):
+        broadcast_octet = broadcast_address_binary[octet:octet + 8]
+        broadcast_address_octets.append(broadcast_octet)
+    broadcast_address = []
+    for octet in broadcast_address_octets:
+        broadcast_address.append(str(int(octet, 2)))
+    return ".".join(broadcast_address)
+
+
 if __name__ == "__main__":
     try:
         while True:
@@ -98,12 +111,13 @@ if __name__ == "__main__":
                 print("\nThe subnetmask is INVALID, enter a valid subnetmask!")
                 continue
 
-        mask_bits, hosts, wildcard_mask, network_address = ip_calculator(ip_address, subnet_mask)
+        mask_bits, hosts, wildcard_mask, network_address, broadcast_ip_address = ip_calculator(ip_address, subnet_mask)
 
-        print("\nThe number of mask bits is: %s" % mask_bits)
-        print("\nThe number of valid hosts per subnet is: %s" % hosts)
+        print("\nThe number of mask bits: %s" % mask_bits)
+        print("\nThe number of valid hosts per subnet: %s" % hosts)
         print("\nThe wildcard mask: %s" % wildcard_mask)
-        print("\nThe network address is: %s" % network_address)
+        print("\nThe network address: %s" % network_address)
+        print("\nThe broadcast address: %s" % broadcast_ip_address)
 
     except KeyboardInterrupt:
         print("/n Interrupted /n")

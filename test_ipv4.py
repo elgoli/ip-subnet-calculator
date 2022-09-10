@@ -14,8 +14,11 @@ class IpCalculator(unittest.TestCase):
         self.assertTrue(ipv4.is_valid_subnet_mask("255.0.0.0"))
 
     def test_ip_calculator(self):
-        mask_bits, hosts, wildcard_mask, network_address = ipv4.ip_calculator("192.168.1.1", "255.255.255.0")
+        mask_bits, hosts, wildcard_mask, network_address, broadcast_ip_address = \
+            ipv4.ip_calculator("192.168.1.1", "255.255.255.0")
+
         self.assertEqual(mask_bits, 24)
         self.assertEqual(hosts, 254)
         self.assertEqual(wildcard_mask, "0.0.0.255")
         self.assertEqual(network_address, "192.168.1.0")
+        self.assertEqual(broadcast_ip_address, "192.168.1.255")
